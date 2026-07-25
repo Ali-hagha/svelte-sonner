@@ -158,6 +158,8 @@
 	const offset = $derived(Math.round(heightIndex * GAP + toastsHeightBefore));
 
 	$effect(() => {
+		if (removed) return;
+
 		toastTitle;
 		toastDescription;
 		let scale: number;
@@ -191,7 +193,9 @@
 
 		initialHeight = finalHeight;
 
-		toastState.setHeight({ toastId: toast.id, height: finalHeight });
+		untrack(() => {
+			toastState.setHeight({ toastId: toast.id, height: finalHeight });
+		});
 	});
 
 	function deleteToast() {
@@ -263,7 +267,9 @@
 		const height = toastRef?.getBoundingClientRect().height as number;
 
 		initialHeight = height;
-		toastState.setHeight({ toastId: toast.id, height });
+		untrack(() => {
+			toastState.setHeight({ toastId: toast.id, height });
+		});
 
 		return () => {
 			toastState.removeHeight(toast.id);

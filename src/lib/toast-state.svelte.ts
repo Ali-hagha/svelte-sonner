@@ -228,12 +228,14 @@ class ToastState {
 	};
 
 	setHeight = (data: HeightT) => {
-		const toastIdx = this.#findToastIdx(data.toastId);
-		if (toastIdx === null) {
-			this.heights.push(data);
+		const alreadyExists = this.heights.find((height) => height.toastId === data.toastId);
+		if (!alreadyExists) {
+			this.heights = [data, ...this.heights];
 			return;
 		}
-		this.heights[toastIdx] = data;
+		this.heights = this.heights.map((height) =>
+			height.toastId === data.toastId ? { ...height, height: data.height } : height
+		);
 	};
 
 	reset = () => {
