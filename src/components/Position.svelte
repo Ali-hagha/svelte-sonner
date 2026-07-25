@@ -20,6 +20,10 @@
 		position: PositionType;
 		setPosition: (position: PositionType) => void;
 	} = $props();
+
+	function removeAllToasts() {
+		toast.dismiss();
+	}
 </script>
 
 <div>
@@ -31,13 +35,10 @@
 				data-active={position === pos}
 				class="button"
 				onclick={() => {
-					const toastsAmount = document.querySelectorAll(
-						'[data-sonner-toast]'
-					).length;
-					setPosition(pos);
-
-					// No need to show a toast when there is already one
-					if (toastsAmount > 0 && pos !== position) return;
+					if (position !== pos) {
+						setPosition(pos);
+						removeAllToasts();
+					}
 
 					toast('Event has been created', {
 						description: 'Monday, January 3rd at 6:00pm'
