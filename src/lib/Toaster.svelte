@@ -187,6 +187,7 @@
 	let listRef = $state<HTMLOListElement>();
 	let lastFocusedElementRef = $state<HTMLElement | null>(null);
 	let isFocusWithin = $state(false);
+	let lastMousePosition: { x: number; y: number } | undefined;
 
 	const hotkeyLabel = $derived(
 		hotkey.join('+').replace(/Key/g, '').replace(/Digit/g, '')
@@ -333,18 +334,26 @@
 
 	const handleMouseEnter: MouseEventHandler<HTMLOListElement> = (event) => {
 		onmouseenter?.(event);
+		lastMousePosition = { x: event.clientX, y: event.clientY };
 		expanded = true;
 	};
 
 	const handleMouseLeave: MouseEventHandler<HTMLOListElement> = (event) => {
 		onmouseleave?.(event);
-		if (!interacting) {
+		const isStationaryRemovalLeave =
+			Boolean(
+				event.currentTarget.querySelector('[data-removed="true"]')
+			) &&
+			event.clientX === lastMousePosition?.x &&
+			event.clientY === lastMousePosition?.y;
+		if (!interacting && !isStationaryRemovalLeave) {
 			expanded = false;
 		}
 	};
 
 	const handleMouseMove: MouseEventHandler<HTMLOListElement> = (event) => {
 		onmousemove?.(event);
+		lastMousePosition = { x: event.clientX, y: event.clientY };
 		expanded = true;
 	};
 
